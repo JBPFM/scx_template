@@ -1,0 +1,12 @@
+[package]
+name = "scx_bin"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+scx_stats = "1.0.17"
+scx_stats_derive = "1.0.17"
+scx_utils = "1.0.22"
+
+[build-dependencies]
+scx_cargo = "1.0.22"
