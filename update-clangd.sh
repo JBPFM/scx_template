@@ -7,7 +7,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
 # Find the most recent build output directory
-LATEST_BUILD=$(find target/debug/build -name "scx_bin-*" -type d -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f2)
+LATEST_BUILD=$(find target/debug/build -name "scx-bin-*" -type d -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f2)
 
 if [ -z "$LATEST_BUILD" ]; then
     echo "Error: No build directory found. Please run 'cargo build' first."
