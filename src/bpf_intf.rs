@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+// SPDX-License-Identifier: {{license_id}}
 //
 // Copyright (c) 2024 Andrea Righi <andrea.righi@linux.dev>
 

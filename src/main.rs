@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+// SPDX-License-Identifier: {{license_id}}
 //
 // Copyright (c) 2024 Andrea Righi <andrea.righi@linux.dev>
 
@@ -25,7 +25,9 @@ use scx_utils::scx_ops_open;
 use scx_utils::uei_exited;
 use scx_utils::uei_report;
 
-/// scx_simple: A simple global weighted vtime scheduler
+const SCHEDULER_NAME: &str = "{{project-name}}";
+
+/// {{project-name}}: A simple global weighted vtime scheduler
 #[derive(Debug, Parser)]
 struct Opts {
     /// Use FIFO scheduling instead of weighted vtime scheduling
@@ -57,7 +59,8 @@ impl<'a> Scheduler<'a> {
         skel_builder.obj_builder.debug(opts.debug);
 
         // Open the BPF skeleton
-        let mut skel = scx_ops_open!(skel_builder, open_object, simple_ops, None)?;
+        let mut skel =
+            scx_ops_open!(skel_builder, open_object, {{scheduler_slug}}_ops, None)?;
 
         // Set BPF variables before loading
         if let Some(rodata) = &mut skel.maps.rodata_data {
@@ -65,12 +68,12 @@ impl<'a> Scheduler<'a> {
         }
 
         // Load the BPF program
-        let mut skel = scx_ops_load!(skel, simple_ops, uei)?;
+        let mut skel = scx_ops_load!(skel, {{scheduler_slug}}_ops, uei)?;
 
         // Attach the scheduler
-        let _link = scx_ops_attach!(skel, simple_ops)?;
+        let _link = scx_ops_attach!(skel, {{scheduler_slug}}_ops)?;
 
-        info!("scx_simple scheduler started");
+        info!("{SCHEDULER_NAME} scheduler started");
         if opts.fifo {
             info!("Scheduling mode: FIFO");
         } else {
@@ -147,7 +150,7 @@ impl<'a> Scheduler<'a> {
 
 impl<'a> Drop for Scheduler<'a> {
     fn drop(&mut self) {
-        info!("scx_simple scheduler stopped");
+        info!("{SCHEDULER_NAME} scheduler stopped");
     }
 }
 

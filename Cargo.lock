@@ -1270,7 +1270,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "scx_bin"
+name = "{{project-name}}"
 version = "0.1.0"
 dependencies = [
  "anyhow",

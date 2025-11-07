@@ -1,0 +1,17 @@
+[template]
+description = "Rust + eBPF sched_ext skeleton ready for cargo-generate"
+cargo_generate_version = ">=0.20.0"
+ignore = [
+    "target",
+    "compile_commands.json"
+]
+
+[placeholders.scheduler_slug]
+type = "string"
+prompt = "Short snake_case identifier used by the BPF scheduler symbols"
+default = "simple"
+
+[placeholders.license_id]
+type = "string"
+prompt = "SPDX license identifier applied to Cargo.toml and file headers"
+default = "GPL-2.0-only"

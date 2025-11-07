@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+/* SPDX-License-Identifier: {{license_id}} */
 /*
  * A simple scheduler.
  *
@@ -34,7 +34,7 @@ UEI_DEFINE(uei);
  * Built-in DSQs such as SCX_DSQ_GLOBAL cannot be used as priority queues
  * (meaning, cannot be dispatched to with scx_bpf_dsq_insert_vtime()). We
  * therefore create a separate DSQ with ID 0 that we dispatch to and consume
- * from. If scx_simple only supported global FIFO scheduling, then we could just
+ * from. If {{project-name}} only supported global FIFO scheduling, then we could just
  * use SCX_DSQ_GLOBAL.
  */
 #define SHARED_DSQ 0
@@ -53,7 +53,7 @@ static void stat_inc(u32 idx)
 		(*cnt_p)++;
 }
 
-s32 BPF_STRUCT_OPS(simple_select_cpu, struct task_struct *p, s32 prev_cpu, u64 wake_flags)
+s32 BPF_STRUCT_OPS({{scheduler_slug}}_select_cpu, struct task_struct *p, s32 prev_cpu, u64 wake_flags)
 {
 	return 0;
 	bool is_idle = false;
@@ -68,7 +68,7 @@ s32 BPF_STRUCT_OPS(simple_select_cpu, struct task_struct *p, s32 prev_cpu, u64 w
 	return cpu;
 }
 
-void BPF_STRUCT_OPS(simple_enqueue, struct task_struct *p, u64 enq_flags)
+void BPF_STRUCT_OPS({{scheduler_slug}}_enqueue, struct task_struct *p, u64 enq_flags)
 {
 	stat_inc(1);	/* count global queueing */
 
@@ -89,12 +89,12 @@ void BPF_STRUCT_OPS(simple_enqueue, struct task_struct *p, u64 enq_flags)
 	}
 }
 
-void BPF_STRUCT_OPS(simple_dispatch, s32 cpu, struct task_struct *prev)
+void BPF_STRUCT_OPS({{scheduler_slug}}_dispatch, s32 cpu, struct task_struct *prev)
 {
 	scx_bpf_dsq_move_to_local(SHARED_DSQ);
 }
 
-void BPF_STRUCT_OPS(simple_running, struct task_struct *p)
+void BPF_STRUCT_OPS({{scheduler_slug}}_running, struct task_struct *p)
 {
 	if (fifo_sched)
 		return;
@@ -109,7 +109,7 @@ void BPF_STRUCT_OPS(simple_running, struct task_struct *p)
 		vtime_now = p->scx.dsq_vtime;
 }
 
-void BPF_STRUCT_OPS(simple_stopping, struct task_struct *p, bool runnable)
+void BPF_STRUCT_OPS({{scheduler_slug}}_stopping, struct task_struct *p, bool runnable)
 {
 	if (fifo_sched)
 		return;
@@ -126,28 +126,28 @@ void BPF_STRUCT_OPS(simple_stopping, struct task_struct *p, bool runnable)
 	p->scx.dsq_vtime += (SCX_SLICE_DFL - p->scx.slice) * 100 / p->scx.weight;
 }
 
-void BPF_STRUCT_OPS(simple_enable, struct task_struct *p)
+void BPF_STRUCT_OPS({{scheduler_slug}}_enable, struct task_struct *p)
 {
 	p->scx.dsq_vtime = vtime_now;
 }
 
-s32 BPF_STRUCT_OPS_SLEEPABLE(simple_init)
+s32 BPF_STRUCT_OPS_SLEEPABLE({{scheduler_slug}}_init)
 {
 	return scx_bpf_create_dsq(SHARED_DSQ, -1);
 }
 
-void BPF_STRUCT_OPS(simple_exit, struct scx_exit_info *ei)
+void BPF_STRUCT_OPS({{scheduler_slug}}_exit, struct scx_exit_info *ei)
 {
 	UEI_RECORD(uei, ei);
 }
 
-SCX_OPS_DEFINE(simple_ops,
-	       .select_cpu		= (void *)simple_select_cpu,
-	       .enqueue			= (void *)simple_enqueue,
-	       .dispatch		= (void *)simple_dispatch,
-	       .running			= (void *)simple_running,
-	       .stopping		= (void *)simple_stopping,
-	       .enable			= (void *)simple_enable,
-	       .init			= (void *)simple_init,
-	       .exit			= (void *)simple_exit,
-	       .name			= "simple");
+SCX_OPS_DEFINE({{scheduler_slug}}_ops,
+	       .select_cpu		= (void *){{scheduler_slug}}_select_cpu,
+	       .enqueue			= (void *){{scheduler_slug}}_enqueue,
+	       .dispatch		= (void *){{scheduler_slug}}_dispatch,
+	       .running			= (void *){{scheduler_slug}}_running,
+	       .stopping		= (void *){{scheduler_slug}}_stopping,
+	       .enable			= (void *){{scheduler_slug}}_enable,
+	       .init			= (void *){{scheduler_slug}}_init,
+	       .exit			= (void *){{scheduler_slug}}_exit,
+	       .name			= "{{scheduler_slug}}");

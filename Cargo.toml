@@ -1,8 +1,8 @@
 [package]
-name = "scx_bin"
+name = "{{project-name}}"
 version = "0.1.0"
 edition = "2024"
-license = "GPL-2.0-only"
+license = "{{license_id}}"
 
 [dependencies]
 anyhow = "1.0.65"
