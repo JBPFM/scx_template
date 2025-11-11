@@ -24,6 +24,7 @@ use scx_utils::scx_ops_load;
 use scx_utils::scx_ops_open;
 use scx_utils::uei_exited;
 use scx_utils::uei_report;
+use libbpf_rs::Link;
 
 const SCHEDULER_NAME: &str = "{{project-name}}";
 
@@ -50,6 +51,7 @@ struct Opts {
 struct Scheduler<'a> {
     skel: BpfSkel<'a>,
     opts: Opts,
+    _link: Link
 }
 
 impl<'a> Scheduler<'a> {
@@ -80,7 +82,7 @@ impl<'a> Scheduler<'a> {
             info!("Scheduling mode: Weighted vtime");
         }
 
-        Ok(Self { skel, opts })
+        Ok(Self { skel, opts, _link })
     }
 
     fn read_stats(&mut self) -> Result<(u64, u64)> {
