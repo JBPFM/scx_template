@@ -55,7 +55,6 @@ static void stat_inc(u32 idx)
 
 s32 BPF_STRUCT_OPS({{scheduler_slug}}_select_cpu, struct task_struct *p, s32 prev_cpu, u64 wake_flags)
 {
-	return 0;
 	bool is_idle = false;
 	s32 cpu;
 
